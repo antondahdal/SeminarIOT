@@ -1,6 +1,8 @@
 
 public class Ibeacon  extends EnvData implements Comparable<Ibeacon>{
 	private int rssi;
+	
+	
 	public Ibeacon(String mac,String timestamp,int rssi) {
 		super(mac,timestamp);
 		setRssi(rssi);
