@@ -19,6 +19,7 @@ public class Controller implements DataObservable{
 				if(e instanceof HTData) {
 				  HTData x=(HTData)e;
 				  if(x.getTemp()>9) {
+					 
 						/*
 						 * System.out.println(x.getTemp()); System.out.println(x.getHumidty());
 						 */
