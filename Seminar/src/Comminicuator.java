@@ -5,8 +5,6 @@ import java.sql.Time;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 public class Comminicuator  implements MqttCallbackExtended {
@@ -111,8 +109,15 @@ private  Comminicuator() {
 				 Ibeacon beacon=new Ibeacon(mac,TS,rssi);
 				 list.add(beacon);
 			 }
+				if(deviceType.equals("Unknown")) {
+					 String rawData=ScanJson.getString("rawData");
+					 if(AccData.isAccelerometerRawData(rawData)) {
+						 AccData walkdata=new AccData(mac,TS);
+						 walkdata.parseRawData(rawData);
+						 list.add(walkdata);
+	 				 }
 
-			 
+				}
 			 }
 		 
 	 }
