@@ -28,33 +28,42 @@ public class Controller implements DataObservable {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
 		for (EnvData e : list) {
-			 checkIFStillOut();
 			 
-
+//we made the temp in this example 40 and more if there's a fire and 20 and less if it's very cold
 			if (e instanceof HTData) {
 				HTData x = (HTData) e;
-				if (x.getTemp() > 9) {
-
+				if (x.getTemp() > 40) {
+					System.out.println("The temperature Is"+x.getTemp()+"there's a Fire. Check !!");
 				
 				}
-				if (x.getTemp() < 5) {
-					System.out.println("Heat Up The Room");
+				if (x.getTemp() <20) {
+					System.out.println("Heat Up The House It's Very Cold !!");
 				}
 			}
+			
+			
 
 			if (e instanceof Ibeacon) {
+				 checkIFStillOut();
 				Ibeacon x = (Ibeacon) e;
 				Lost y = new Lost(x.getMac(), x.getTimeStamp(), x.getRssi());
-
-				if (location.PredictedMeters(y.getRssi()) > 10) {
+				
+				System.out.println(location.PredictedMeters(y.getRssi()));
+				
+				
+				
+				
+				if (location.PredictedMeters(y.getRssi()) >= 10) {
 					if (Out.size() == 0) {
+						y.setDate(now);
+						System.out.println(y.getMac()+" Just went Outside The House");
 						Out.add(y);
 					}
 					for (Lost l : Out) {
 						if (!l.getMac().equals(y.getMac())) {
+							System.out.println(y.getMac()+" Just went Outside The House");
 
 							y.setDate(now);
-							System.out.println(y.getDate().getHour());
 							Out.add(y);
 						}
 					}
@@ -62,17 +71,22 @@ public class Controller implements DataObservable {
 				}
 
 				
-				  if(location.PredictedMeters(y.getRssi())<=10&&Out.contains(y)) {
-					  Out.remove(y);
-				  }
+				  if(location.PredictedMeters(y.getRssi())<=9) {
+					  Out=new ArrayList<Lost>();
+						System.out.println(y.getMac()+" Is In the House");
+
+							  Out.remove(y);
+						  }
+					  
+					  
+				  
 				 
 			}
 			
 			if(e instanceof AccData) {
 				AccData accData=(AccData)e;
-				System.out.println(accData.SumVector());
 				if(accData.SumVector()>0.3&&accData.SumVector()<0.5) {
-					System.out.println("fall");
+					System.out.println("The elderly Fell Check Him Now!!");
 				}
 			}
 		}
@@ -80,11 +94,11 @@ public class Controller implements DataObservable {
 
 	public void checkIFStillOut() {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-		LocalDateTime now = LocalDateTime.now();
-
+		
 		for (Lost l : Out) {
-			if (l.getDate().getDayOfMonth() == now.getDayOfMonth()) {
-				if (l.getDate().getHour() - now.getHour() > 8) {
+			LocalDateTime now = LocalDateTime.now();
+			if (l.getDate().getDayOfMonth() == now.getDayOfMonth()&&location.PredictedMeters(l.getRssi())>6) {
+				if (l.getDate().getHour() - now.getHour() > 8){
 					System.out.println("The Eldery is Out of his home for more Than 8 Hours Check him Now!!");
 				}
 			}
@@ -98,3 +112,5 @@ public class Controller implements DataObservable {
 
 	
 }
+	
+
